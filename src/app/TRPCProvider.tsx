@@ -10,7 +10,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [ trpcClient ] = useState(() => trpc.createClient({
     links: [
       httpBatchLink({
-        url: '/api'
+        url: `${getBaseUrl()}/api`
       })
     ]
   }))
@@ -22,4 +22,11 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       </QueryClientProvider>
     </trpc.Provider>
   )
+}
+
+function getBaseUrl() {
+  if (process.env.VERCEL_URL)
+    return `https://${process.env.VERCEL_URL}`
+
+  return ''
 }
