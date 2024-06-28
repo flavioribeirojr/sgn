@@ -8,6 +8,7 @@ const schema = z.object({
   MAIL_SECURE: z.boolean({ coerce: true }).default(false).optional(),
   MAIL_USER: z.string().optional(),
   MAIL_PASS: z.string().optional(),
+  MAIL_FROM: z.string().email().optional(),
   REGISTER_EVENTS: z.enum(['1', '0']).optional().default('1')
 })
 
