@@ -1,5 +1,6 @@
 import EventEmitter from 'events'
 import * as schema from './schema'
+import { logger } from 'logger/logger'
 
 const emitter = new EventEmitter({
   captureRejections: true,
@@ -13,6 +14,13 @@ export const EventBus = {
     emitter.emit(event.eventName, event.payload),
 
   addListener: (eventName: Event['eventName'], listener: (payload: Event['payload']) => Promise<void>) => {
-    emitter.on(eventName, listener)
+    emitter.on(eventName, async function (payload: Event['payload']) {
+      try {
+        logger.info(`Runing event :: ${eventName}`)
+        await listener(payload)
+      } catch (err) {
+        logger.error(err, `Event error(${ eventName })`)
+      }
+    })
   }
 }

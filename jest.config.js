@@ -8,6 +8,7 @@ module.exports = {
     '^db/(.*)$': '<rootDir>/db/$1',
     '^cache/(.*)$': '<rootDir>/cache/$1',
     '^mail/(.*)$': '<rootDir>/mail/$1',
+    '^logger/(.*)$': '<rootDir>/logger/$1',
   },
   globalSetup: './tests/setup.ts',
   globalTeardown: './tests/teardown.ts',
