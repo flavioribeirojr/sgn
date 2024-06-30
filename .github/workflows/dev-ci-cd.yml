@@ -10,13 +10,10 @@ on:
     branches: ["dev"]
 
 jobs:
-  containers-job:
-    # Containers must run in Linux based operating systems
+  build:
     runs-on: ubuntu-latest
-    # Docker Hub image that `container-job` executes in
-    container: node:10.18-jessie
+    container: node:20
 
-    # Service containers to run with `container-job`
     services:
       # Label used to access the service container
       postgres:
@@ -43,14 +40,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
       REDIS_CONNECTION_URL: redis://redis:6379
