@@ -17,7 +17,7 @@ describe('Email Verification', () => {
 
     cy.get('input[name="name"]').type(faker.person.fullName())
     cy.get('input[name="dateOfBirth"]').type('1990-01-01')
-    cy.get('input[name="email"]').type(faker.internet.email())
+    cy.get('input[name="email"]').type(faker.internet.email({ provider: 'tekoa.tech' }))
     cy.get('input[name="password"]').type(faker.internet.password())
 
     cy.get('form > button').click()
@@ -35,7 +35,7 @@ describe('Email Verification', () => {
     cy.on('window:alert', stub)
 
     cy.visit('/auth/signup')
-    const email = faker.internet.email()
+    const email = faker.internet.email({ provider: 'tekoa.tech' })
 
     cy.get('input[name="name"]').type(faker.person.fullName())
     cy.get('input[name="dateOfBirth"]').type('1990-01-01')

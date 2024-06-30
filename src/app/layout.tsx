@@ -3,12 +3,6 @@ import { IBM_Plex_Serif } from 'next/font/google'
 import './globals.css'
 import { AppConfig } from 'config/app'
 import { TRPCProvider } from './TRPCProvider'
-import { EventListeners } from '@/server/events/listeners'
-import { env } from 'config/env'
-
-if (env.REGISTER_EVENTS === '1') {
-  EventListeners.register()
-}
 
 const ibmPlexSerif = IBM_Plex_Serif({ subsets: ['latin'] , weight: '400'})
 

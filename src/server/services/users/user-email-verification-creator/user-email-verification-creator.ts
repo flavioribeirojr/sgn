@@ -1,10 +1,9 @@
-import { EventBus } from '@/server/events/bus'
-import { UserEmailVerificationCreated } from '@/server/events/schema'
 import { getRedisClient } from 'cache/redis-client'
 import { randomInt } from 'crypto'
 import { db } from 'db/index'
 import { userCredentials } from 'db/schema'
 import { sql } from 'drizzle-orm'
+import { Mailer } from 'mail/mailer'
 
 async function create(email: string) {
   const redisClient = await getRedisClient()
@@ -29,10 +28,16 @@ async function create(email: string) {
     EX: expirationTimeInSeconds
   })
 
-  EventBus.fire(UserEmailVerificationCreated({
-    email,
-    code
-  }))
+  await Mailer.send({
+    to: email,
+    subject: 'Verify your email',
+    htmlBody: `
+      <div style="text-align: center">
+        <h2>Use the code below to confirm your identity</h2>
+        <p>${code}</p>
+      </div>
+    `
+  })
 }
 
 export const UserEmailVerificationCreator = {
