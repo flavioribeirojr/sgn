@@ -50,6 +50,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare DB
+        run: npm run migrate
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
