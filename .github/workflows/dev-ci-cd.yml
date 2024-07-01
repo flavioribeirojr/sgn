@@ -12,8 +12,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: cypress/browsers:latest
-
+    container:
+      image: cypress/browsers:latest
+      options: --user 1001
+    env:
+      DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
+      REDIS_CONNECTION_URL: redis://redis:6379
+      POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
+      MAIL_FROM: flavio@tekoa.tech
     services:
       # Label used to access the service container
       postgres:
@@ -40,22 +46,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    env:
-      DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
-      REDIS_CONNECTION_URL: redis://redis:6379
-      POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
-      MAIL_FROM: flavio@tekoa.tech
     steps:
-      - uses: actions/checkout@v4
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-      - run: npm ci
-      - run: npm run e2e:headless
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          build: yarn build
+          start: yarn start
+          wait-on: "http://localhost:3000"
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Pull Vercel Environment Information
