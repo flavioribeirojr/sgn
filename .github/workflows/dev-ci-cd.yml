@@ -50,6 +50,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install packages
+        run: npm install
+
       - name: Prepare DB
         run: npm run migrate
 
