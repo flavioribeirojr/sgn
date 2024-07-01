@@ -37,7 +37,7 @@ describe('UserSignup', () => {
 
     cy.get('input[name="name"]').type(faker.person.fullName())
     cy.get('input[name="dateOfBirth"]').type('1990-01-01')
-    cy.get('input[name="email"]').type(faker.internet.email())
+    cy.get('input[name="email"]').type(faker.internet.email({ provider: 'tekoa.tech' }))
     cy.get('input[name="password"]').type(faker.internet.password())
 
     cy.get('form > button').click()
@@ -46,7 +46,7 @@ describe('UserSignup', () => {
   })
 
   it('must show validation error when email is already being used', () => {
-    const email = faker.internet.email()
+    const email = faker.internet.email({ provider: 'tekoa.tech' })
 
     cy.visit('/auth/signup')
 
