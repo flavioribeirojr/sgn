@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: node:20
+    container: cypress/browsers:latest
 
     services:
       # Label used to access the service container
@@ -47,11 +47,8 @@ jobs:
       MAIL_FROM: flavio@tekoa.tech
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
       - run: npm ci
       - run: npm run e2e:headless
 
