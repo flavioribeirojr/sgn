@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
-      options: --user 1001
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
       REDIS_CONNECTION_URL: redis://redis:6379
