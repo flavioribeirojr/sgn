@@ -15,7 +15,7 @@ jobs:
     container:
       image: cypress/browsers:latest
       volumes:
-        - /github/home/screenshots:/__w/sgn/sgn/cypress/screenshots
+        - /data/screenshots:/__w/sgn/sgn/cypress/screenshots
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
       REDIS_CONNECTION_URL: redis://redis:6379
@@ -51,7 +51,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install packages
         run: npm install
