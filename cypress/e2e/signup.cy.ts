@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { setupClerkTestingToken } from '@clerk/testing/cypress'
 
 describe('UserSignup', () => {
   afterEach(() => {
@@ -33,6 +34,8 @@ describe('UserSignup', () => {
   })
 
   it('must sucessfully create an email verification when submiting a valid form', () => {
+    setupClerkTestingToken()
+
     const email = `${faker.string.uuid()}+clerk_test@example.com`
     cy.visit('/auth/signup')
 
@@ -48,6 +51,8 @@ describe('UserSignup', () => {
 
   it('must validate code field', () => {
     cy.session('invalid_code_field', () => {
+      setupClerkTestingToken()
+
       cy.visit('/auth/signup')
       const email = `${faker.string.uuid()}+clerk_test@example.com`
 
@@ -68,6 +73,7 @@ describe('UserSignup', () => {
 
   it('must show a invalid code message when verification code does not exist', () => {
     cy.session('invalid_code', () => {
+      setupClerkTestingToken()
       cy.visit('/auth/signup')
       const email = `${faker.string.uuid()}+clerk_test@example.com`
 
@@ -93,6 +99,7 @@ describe('UserSignup', () => {
 
   it('must successfully signup with the given code', () => {
     cy.session('success_signup', () => {
+      setupClerkTestingToken()
       const stub = cy.stub()
       cy.on('window:alert', stub)
 
