@@ -3,7 +3,7 @@ import { UseFormRegister } from 'react-hook-form'
 
 export const FormTextInput = forwardRef<
   HTMLInputElement,
-  HTMLProps<HTMLInputElement> | (HTMLProps<HTMLInputElement> & ReturnType<UseFormRegister<any>>)
+  Props
 >(function FormTextInput(props, ref) {
   return (
     <input
@@ -14,3 +14,5 @@ export const FormTextInput = forwardRef<
     />
   )
 })
+
+type Props = HTMLProps<HTMLInputElement> | (HTMLProps<HTMLInputElement> & ReturnType<UseFormRegister<any>>)
