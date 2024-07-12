@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 
 describe('UserSignup', () => {
   afterEach(() => {
-    cy.task('clean_db_and_redis')
+    cy.task('clean_db')
   })
 
   it('must work lol', () => {

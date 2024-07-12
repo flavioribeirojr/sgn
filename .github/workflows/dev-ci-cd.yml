@@ -19,6 +19,8 @@ jobs:
       REDIS_CONNECTION_URL: redis://redis:6379
       POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
       MAIL_FROM: flavio@tekoa.tech
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
     services:
       # Label used to access the service container
       postgres:
