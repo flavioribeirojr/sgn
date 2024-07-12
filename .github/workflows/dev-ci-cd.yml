@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
+      volumes:
+        - /github/home/screenshots:/__w/sgn/sgn/cypress/screenshots
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
       REDIS_CONNECTION_URL: redis://redis:6379
@@ -70,7 +72,7 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: /github/home/screenshots
 
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
