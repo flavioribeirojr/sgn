@@ -3,6 +3,7 @@ import { IBM_Plex_Serif } from 'next/font/google'
 import './globals.css'
 import { AppConfig } from 'config/app'
 import { TRPCProvider } from './TRPCProvider'
+import { ClerkProvider } from '@clerk/nextjs'
 
 const ibmPlexSerif = IBM_Plex_Serif({ subsets: ['latin'] , weight: '400'})
 
@@ -18,12 +19,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <body className={ibmPlexSerif.className}>
-        <TRPCProvider>
-          {children}
-        </TRPCProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang='en'>
+        <body className={ibmPlexSerif.className}>
+          <TRPCProvider>
+            {children}
+          </TRPCProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

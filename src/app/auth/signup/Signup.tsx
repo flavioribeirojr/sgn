@@ -5,48 +5,90 @@ import { SubmitButton } from '@/components/submit-button/submit-button'
 import { IBM_Plex_Serif } from 'next/font/google'
 import { useForm } from 'react-hook-form'
 import type { AppRouterInputs } from '@/server'
-import { trpc } from '@/client'
-import { useContext, useEffect } from 'react'
+import { useCallback, useState } from 'react'
 import { FormErrorMessage } from '@/components/form-error-message/form-error-message'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
-import { SignupDataContext } from '../SignupData.contex'
-import { useRouter } from 'next/navigation'
+import { useSignUp } from '@clerk/nextjs'
+import { ClerkAPIError } from '@clerk/types'
+import { EmailVerification } from './EmailVerification'
+import { isClerkAPIResponseError } from '@clerk/nextjs/errors'
 
 const ibmPlexSerif = IBM_Plex_Serif({ weight: '600', subsets: ['latin'] })
-type SignupForm = Omit<AppRouterInputs['users']['emailSignup'], 'verificationCode'>
+type SignupForm = AppRouterInputs['users']['createUser'] & {
+  password: string;
+}
 
 export function Signup() {
-  const { isSuccess, reset, ...emailVerificationCreateMutation } = trpc.users.emailVerificationCreate.useMutation()
-  const signupDataContext = useContext(SignupDataContext)
-  const router = useRouter()
+  const { isLoaded, signUp, setActive } = useSignUp()
+  const [ isLoading, setIsLoading ] = useState(false)
+  const [ isVerifying, setIsVerifying ] = useState(false)
+  const [ createUserInput, setCreateUserInput ] = useState<AppRouterInputs['users']['createUser'] | null>(null)
+  const [ clerkErrors, setClerkErrors ] = useState<ClerkAPIError[]>([])
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm<SignupForm>({
     mode: 'onBlur',
   })
 
-  useEffect(() => {
-    if (!isSuccess) {
+  const handleVerificationExpired = useCallback(function() {
+    if (!isLoaded) {
       return
     }
 
-    const values = getValues()
-    signupDataContext.setValue(values)
+    signUp.reload()
+  }, [isLoaded, signUp])
 
-    router.push('/auth/email-verification')
-    reset()
-  }, [isSuccess, getValues, signupDataContext, router, reset])
+  async function submit(values: SignupForm) {
+    if (!isLoaded) {
+      return
+    }
+
+    setClerkErrors([])
+    setIsLoading(true)
+
+    try {
+      await signUp.create({
+        emailAddress: values.email,
+        password: values.password,
+      })
+
+      await signUp.prepareEmailAddressVerification({
+        strategy: 'email_code',
+      })
+
+      setCreateUserInput(values)
+      setIsVerifying(true)
+    } catch (err) {
+      if (isClerkAPIResponseError(err)) {
+        setClerkErrors(err.errors)
+      }
+      console.log(JSON.stringify(err, null, 2))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isVerifying && signUp && createUserInput) {
+    return (
+      <EmailVerification
+        signUp={signUp}
+        setActive={setActive}
+        isLoaded={isLoaded}
+        values={createUserInput}
+        onVerificationExpired={handleVerificationExpired}
+      />
+    )
+  }
 
   return (
-    <div className='w-full md:w-3/6 2xl:w-1/5 py-8 px-8 rounded-md bg-white'>
+    <div className='w-full md:w-2/6 2xl:w-1/5 py-8 px-8 rounded-md bg-white'>
       <h2 className={`${ibmPlexSerif.className} text-center text-2.5xl`}>create your profile</h2>
       <p className='text-center py-3'>
         complete this simple step to start your new learning journey
       </p>
-      <form onSubmit={handleSubmit(data => { emailVerificationCreateMutation.mutate(data.email) })}>
+      <form onSubmit={handleSubmit(submit)}>
         <div className='mb-4'>
           <FormTextInput
             placeholder="what's your name?"
@@ -78,7 +120,7 @@ export function Signup() {
             type='your best email'
             {...register('email', {
               required: { value: true, message: 'Please provide an email address' },
-              pattern: { value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, message: 'Please provide a valid email' }
+              pattern: { value: /^[\w-\.\+]+@([\w-]+\.)+[\w-]{2,4}$/g, message: 'Please provide a valid email' }
             })}
           />
           { errors.email &&
@@ -100,18 +142,18 @@ export function Signup() {
           }
         </div>
 
-        { emailVerificationCreateMutation.error !== null &&
-          <FormErrorMessage className='text-center mt-7'>
-            { emailVerificationCreateMutation.error.data?.code === 'CONFLICT' &&
-              'Email is already being used'
-            }
-            { emailVerificationCreateMutation.error.data?.code === 'INTERNAL_SERVER_ERROR' &&
-              'Something went wrong. Please try again later.'
-            }
-          </FormErrorMessage>
-        }
+        { clerkErrors.length > 0 && (
+          <div className='mt-7'>
+            { clerkErrors.map(err => (
+              <FormErrorMessage key={err.code} className='last:mt-3 child first:pb-2 font-semibold text-xs'>
+                { err.code === 'form_identifier_exists' && 'The provided email is already being used' }
+                { err.code === 'form_password_pwned' && 'This password is compromised. Please use another one.' }
+              </FormErrorMessage>
+            )) }
+          </div>
+        )}
         <SubmitButton className='mt-7 mb-3' type='submit'>
-          { emailVerificationCreateMutation.isPending ?
+          { isLoading ?
             <LoadingSpinner /> :
             'create my account'
           }

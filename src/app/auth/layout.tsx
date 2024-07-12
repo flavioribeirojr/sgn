@@ -1,6 +1,5 @@
 import { Indie_Flower } from 'next/font/google'
 import Image from 'next/image'
-import { SignupDataProvider } from './SignupData.contex'
 
 const indieFlower = Indie_Flower({ subsets: ['latin'], weight: '400' })
 
@@ -14,7 +13,7 @@ export default function AuthLayout({
       <Image
         src='/auth_bg.png'
         alt='desk with a computer and a plant'
-        className='absolute w-full h-full'
+        className='absolute w-full h-full object-cover'
         width={1265}
         height={949}
       />
@@ -27,9 +26,7 @@ export default function AuthLayout({
         <h1 className={`${indieFlower.className} text-white text-center pt-3 pb-3 text-6xl`}>
           Tekoa
         </h1>
-        <SignupDataProvider>
-          { children }
-        </SignupDataProvider>
+        { children }
       </main>
       <footer className='text-white relative text-center mt-5 pb-4 text-xs'>
         <p>Version 0.0.1</p>

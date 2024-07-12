@@ -6,7 +6,9 @@ const generatedPrimaryUUID = () => uuid('id').primaryKey().default(sql`gen_rando
 export const users = pgTable('users', {
   id: generatedPrimaryUUID(),
   name: varchar('name', { length: 70 }),
+  email: varchar('email'),
   dateOfBirth: date('date_of_birth'),
+  authUserId: varchar('auth_user_id', { length: 32 })
 })
 
 export const userCredentials = pgTable('user_credentials', {

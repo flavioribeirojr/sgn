@@ -33,39 +33,84 @@ describe('UserSignup', () => {
   })
 
   it('must sucessfully create an email verification when submiting a valid form', () => {
+    const email = `${faker.string.uuid()}+clerk_test@example.com`
     cy.visit('/auth/signup')
 
     cy.get('input[name="name"]').type(faker.person.fullName())
     cy.get('input[name="dateOfBirth"]').type('1990-01-01')
-    cy.get('input[name="email"]').type(faker.internet.email({ provider: 'tekoa.tech' }))
+    cy.get('input[name="email"]').type(email)
     cy.get('input[name="password"]').type(faker.internet.password())
 
     cy.get('form > button').click()
 
-    cy.location('pathname').should('eq', '/auth/email-verification')
+    cy.get('h2').should('contain', 'verify your email')
   })
 
-  it('must show validation error when email is already being used', () => {
-    const email = faker.internet.email({ provider: 'tekoa.tech' })
+  it('must validate code field', () => {
+    cy.session('invalid_code_field', () => {
+      cy.visit('/auth/signup')
+      const email = `${faker.string.uuid()}+clerk_test@example.com`
 
-    cy.visit('/auth/signup')
+      cy.get('input[name="name"]').type(faker.person.fullName())
+      cy.get('input[name="dateOfBirth"]').type('1990-01-01')
+      cy.get('input[name="email"]').type(email)
+      cy.get('input[name="password"]').type(faker.internet.password())
 
-    cy.get('input[name="name"]').type(faker.person.fullName())
-    cy.get('input[name="dateOfBirth"]').type('1990-01-01')
-    cy.get('input[name="email"]').type(email)
-    cy.get('input[name="password"]').type(faker.internet.password())
+      cy.get('form > button').click()
 
-    cy.get('form > button').click()
-    cy.location('pathname').should('eq', '/auth/email-verification')
+      cy.get('h2').should('contain', 'verify your email')
 
-    cy.visit('/auth/signup')
+      cy.get('input[name="verificationCode"]').click().clear().blur()
 
-    cy.get('input[name="name"]').type(faker.person.fullName())
-    cy.get('input[name="dateOfBirth"]').type('1990-01-01')
-    cy.get('input[name="email"]').type(email)
-    cy.get('input[name="password"]').type(faker.internet.password())
+      cy.contains('Please provide the verification code')
+    })
+  })
 
-    cy.get('form > button').click()
-    cy.contains('Email is already being used')
+  it('must show a invalid code message when verification code does not exist', () => {
+    cy.session('invalid_code', () => {
+      cy.visit('/auth/signup')
+      const email = `${faker.string.uuid()}+clerk_test@example.com`
+
+      cy.get('input[name="name"]').type(faker.person.fullName())
+      cy.get('input[name="dateOfBirth"]').type('1990-01-01')
+      cy.get('input[name="email"]').type(email)
+      cy.get('input[name="password"]').type(faker.internet.password())
+
+      cy.get('form > button').click()
+
+      cy.get('h2').should('contain', 'verify your email')
+
+      cy.get('input[name="verificationCode"]').click().clear().blur()
+
+      cy.contains('Please provide the verification code')
+
+      cy.get('input[name="verificationCode"]').type('0000')
+
+      cy.get('form > button').click()
+      cy.contains('Incorrect code provided')
+    })
+  })
+
+  it('must successfully signup with the given code', () => {
+    cy.session('success_signup', () => {
+      const stub = cy.stub()
+      cy.on('window:alert', stub)
+
+      cy.visit('/auth/signup')
+      const email = `${faker.string.uuid()}+clerk_test@example.com`
+
+      cy.get('input[name="name"]').type(faker.person.fullName())
+      cy.get('input[name="dateOfBirth"]').type('1990-01-01')
+      cy.get('input[name="email"]').type(email)
+      cy.get('input[name="password"]').type(faker.internet.password())
+
+      cy.get('form > button').click()
+
+      cy.get('h2').should('contain', 'verify your email')
+      cy.get('input[name="verificationCode"]').type('424242')
+      cy.get('form > button').click()
+
+      cy.location('pathname').should('eq', '/')
+    })
   })
 })
