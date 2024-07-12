@@ -6,6 +6,7 @@ import { db } from './db'
 import { users } from './db/schema'
 
 export default defineConfig({
+  projectId: '3mupk2',
   e2e: {
     baseUrl: 'http://localhost:3000',
     async setupNodeEvents(on) {

@@ -10,7 +10,7 @@
     "test:int:watch": "jest --testMatch='**/*.int.spec.ts' --watch --detectOpenHandles",
     "cypress:open": "cypress open --e2e",
     "e2e": "tsx ./cypress/cli/prepare-test-db.ts && NODE_ENV=test DEBUG=start-server-and-test  start-server-and-test dev http-get://localhost:3000 \"cypress open --e2e\"",
-    "e2e:headless": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
+    "e2e:headless": "NODE_ENV=test start-server-and-test dev http://localhost:3000 \"cypress run --e2e - $ARGS\"",
     "migrate": "tsx ./db/migrate.ts",
     "migrate:env": "tsx ./db/migrate.ts --load-env-file"
   },

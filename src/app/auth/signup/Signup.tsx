@@ -123,7 +123,10 @@ export function Signup() {
             type='your best email'
             {...register('email', {
               required: { value: true, message: 'Please provide an email address' },
-              pattern: { value: /^[\w-\.\+]+@([\w-]+\.)+[\w-]{2,4}$/g, message: 'Please provide a valid email' }
+              pattern: {
+                value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                message: 'Please provide a valid email'
+              }
             })}
           />
           { errors.email &&

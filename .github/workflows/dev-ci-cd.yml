@@ -14,11 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
-      volumes:
-        - /data/screenshots:${{ github.workspace }}
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
-      REDIS_CONNECTION_URL: redis://redis:6379
       POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
       MAIL_FROM: flavio@tekoa.tech
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
@@ -41,14 +38,6 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
-      redis:
-        image: redis
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,18 +50,15 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         with:
           browser: chrome
           build: yarn build
           start: yarn start
+          record: true
           wait-on: "http://localhost:3000"
-
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: /data/screenshots
 
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
