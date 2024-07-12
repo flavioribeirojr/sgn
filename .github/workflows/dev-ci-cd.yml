@@ -65,6 +65,13 @@ jobs:
           start: yarn start
           wait-on: "http://localhost:3000"
 
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
