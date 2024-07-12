@@ -88,7 +88,10 @@ export function Signup() {
       <p className='text-center py-3'>
         complete this simple step to start your new learning journey
       </p>
-      <form onSubmit={handleSubmit(submit)}>
+      <form onSubmit={e => {
+        e.preventDefault()
+        handleSubmit(submit)(e)
+      }}>
         <div className='mb-4'>
           <FormTextInput
             placeholder="what's your name?"
@@ -146,8 +149,7 @@ export function Signup() {
           <div className='mt-7'>
             { clerkErrors.map(err => (
               <FormErrorMessage key={err.code} className='last:mt-3 child first:pb-2 font-semibold text-xs'>
-                { err.code === 'form_identifier_exists' && 'The provided email is already being used' }
-                { err.code === 'form_password_pwned' && 'This password is compromised. Please use another one.' }
+                { getClerkErrorMessage(err) }
               </FormErrorMessage>
             )) }
           </div>
@@ -161,4 +163,15 @@ export function Signup() {
       </form>
     </div>
   )
+}
+
+function getClerkErrorMessage(err: ClerkAPIError) {
+  switch (err.code) {
+  case 'form_identifier_exists':
+    return 'The provided email is already being used'
+  case 'form_password_pwned':
+    return 'This password is compromised. Please use another one.'
+  default:
+    return err.longMessage
+  }
 }
