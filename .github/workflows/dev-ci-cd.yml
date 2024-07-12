@@ -16,6 +16,7 @@ jobs:
       image: cypress/browsers:latest
       volumes:
         - /data/screenshots:/__w/sgn/sgn/cypress/screenshots
+        - /data/screenshots:${{ github.workspace }}
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
       REDIS_CONNECTION_URL: redis://redis:6379
@@ -72,7 +73,7 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: /github/home/screenshots
+          path: /data/screenshots
 
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
