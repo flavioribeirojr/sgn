@@ -15,7 +15,6 @@ jobs:
     container:
       image: cypress/browsers:latest
       volumes:
-        - /data/screenshots:/__w/sgn/sgn/cypress/screenshots
         - /data/screenshots:${{ github.workspace }}
     env:
       DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
