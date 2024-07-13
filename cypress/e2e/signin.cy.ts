@@ -1,5 +1,4 @@
 import { setupClerkTestingToken } from '@clerk/testing/cypress'
-import { randomBytes } from 'crypto'
 
 describe('/auth/signin', () => {
   it('must validate all fields', () => {
@@ -40,7 +39,7 @@ describe('/auth/signin', () => {
       cy.visit('/auth/signin')
 
       cy.get('input[name="email"]').type(Cypress.env('TEST_ACCOUNT_USER'))
-      cy.get('input[name="password"]').type(randomBytes(12).toString('utf8'))
+      cy.get('input[name="password"]').type('WRONG_PASSWORD')
 
       cy.get('form > button').click()
 
