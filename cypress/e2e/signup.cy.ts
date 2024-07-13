@@ -118,6 +118,8 @@ describe('UserSignup', () => {
       cy.get('form > button').click()
 
       cy.location('pathname').should('eq', '/')
+
+      cy.task('delete_clerk_user_by_email', email)
     })
   })
 })

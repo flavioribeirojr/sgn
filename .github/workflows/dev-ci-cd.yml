@@ -20,6 +20,8 @@ jobs:
       MAIL_FROM: flavio@tekoa.tech
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      TEST_ACCOUNT_USER: ${{ secrets.TEST_ACCOUNT_USER }}
+      TEST_ACCOUNT_PASSWORD: ${{ secrets.TEST_ACCOUNT_PASSWORD }}
     services:
       # Label used to access the service container
       postgres:

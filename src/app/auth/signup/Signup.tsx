@@ -119,8 +119,8 @@ export function Signup() {
         </div>
         <div className='mb-4'>
           <FormTextInput
-            placeholder='email'
-            type='your best email'
+            placeholder='your best email'
+            type='email'
             {...register('email', {
               required: { value: true, message: 'Please provide an email address' },
               pattern: {
