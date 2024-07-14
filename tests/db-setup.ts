@@ -20,10 +20,10 @@ export async function setupTestDB() {
     .withExposedPorts(5432)
     .start()
 
-  const DATABASE_CONNECTION_URL = `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${container.getHost()}:${container.getFirstMappedPort()}/${POSTGRES_DB}`
-  process.env.DATABASE_CONNECTION_URL = DATABASE_CONNECTION_URL
+  const DATABASE_URL = `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${container.getHost()}:${container.getFirstMappedPort()}/${POSTGRES_DB}`
+  process.env.DATABASE_URL = DATABASE_URL
 
-  const migrationClient = postgres(DATABASE_CONNECTION_URL, { max: 1 })
+  const migrationClient = postgres(DATABASE_URL, { max: 1 })
   const db = drizzle(migrationClient, { schema })
   await migrate(db, { migrationsFolder: path.join(__dirname, '..', 'db', 'drizzle') })
   await db.execute(sql`SELECT 1`)
