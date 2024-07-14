@@ -104,7 +104,7 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build Project Artifacts
-        run: vercel --env DATABASE_CONNECTION_URL=${{ steps.create-branch.outputs.db_url_with_pooler }} build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel --env DATABASE_CONNECTION_URL="${{ steps.create-branch.outputs.db_url_with_pooler }}" build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy Preview to Vercel
         id: deploy
         run: echo preview_url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}) >> $GITHUB_OUTPUT
