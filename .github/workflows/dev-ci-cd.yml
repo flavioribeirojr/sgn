@@ -21,7 +21,7 @@ jobs:
     container:
       image: cypress/browsers:latest
     env:
-      DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/sgn
       POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
       MAIL_FROM: flavio@tekoa.tech
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
