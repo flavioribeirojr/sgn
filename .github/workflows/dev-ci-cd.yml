@@ -9,17 +9,25 @@ on:
   pull_request:
     branches: ["dev"]
 
+env:
+  NEON_DATABASE_USERNAME: ${{ secrets.PG_USERNAME }}
+  NEON_DATABASE_NAME: ${{ secrets.PG_DATABASE }}
+  NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+  NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
     env:
-      DATABASE_CONNECTION_URL: postgres://postgres:postgres@postgres:5432/sgn
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/sgn
       POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
       MAIL_FROM: flavio@tekoa.tech
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      TEST_ACCOUNT_USER: ${{ secrets.TEST_ACCOUNT_USER }}
+      TEST_ACCOUNT_PASSWORD: ${{ secrets.TEST_ACCOUNT_PASSWORD }}
     services:
       # Label used to access the service container
       postgres:
@@ -59,12 +67,3 @@ jobs:
           start: yarn start
           record: true
           wait-on: "http://localhost:3000"
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
