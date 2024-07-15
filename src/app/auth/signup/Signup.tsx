@@ -12,6 +12,8 @@ import { useSignUp } from '@clerk/nextjs'
 import { ClerkAPIError } from '@clerk/types'
 import { EmailVerification } from './EmailVerification'
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors'
+import { FormField } from '@/components/form-field/FormField'
+import Link from 'next/link'
 
 const ibmPlexSerif = IBM_Plex_Serif({ weight: '600', subsets: ['latin'] })
 type SignupForm = AppRouterInputs['users']['createUser'] & {
@@ -37,8 +39,9 @@ export function Signup() {
       return
     }
 
+    setIsVerifying(false)
     signUp.reload()
-  }, [isLoaded, signUp])
+  }, [isLoaded, signUp, setIsVerifying])
 
   async function submit(values: SignupForm) {
     if (!isLoaded) {
@@ -92,11 +95,10 @@ export function Signup() {
         e.preventDefault()
         handleSubmit(submit)(e)
       }}>
-        <div className='mb-4'>
+        <FormField label='Name' className='mb-4'>
           <FormTextInput
             placeholder="what's your name?"
             type='text'
-            className='mt-6'
             {...register('name', { required: { value: true, message: 'Please tell us your name' } })}
           />
           { errors.name &&
@@ -104,8 +106,8 @@ export function Signup() {
               { errors.name.message }
             </FormErrorMessage>
           }
-        </div>
-        <div className='mb-4'>
+        </FormField>
+        <FormField label='Date of Birth' className='mb-4'>
           <FormTextInput
             placeholder='when were you born?'
             type='date'
@@ -116,8 +118,8 @@ export function Signup() {
               { errors.dateOfBirth.message }
             </FormErrorMessage>
           }
-        </div>
-        <div className='mb-4'>
+        </FormField>
+        <FormField label='Email Address' className='mb-4'>
           <FormTextInput
             placeholder='your best email'
             type='email'
@@ -134,8 +136,8 @@ export function Signup() {
               { errors.email.message }
             </FormErrorMessage>
           }
-        </div>
-        <div className='mb-4'>
+        </FormField>
+        <FormField label='Password' className='mb-4'>
           <FormTextInput
             placeholder='set a password'
             type='password'
@@ -146,7 +148,7 @@ export function Signup() {
               { errors.password.message }
             </FormErrorMessage>
           }
-        </div>
+        </FormField>
 
         { clerkErrors.length > 0 && (
           <div className='mt-7'>
@@ -157,13 +159,19 @@ export function Signup() {
             )) }
           </div>
         )}
-        <SubmitButton className='mt-7 mb-3' type='submit'>
+        <SubmitButton className='mt-7' type='submit'>
           { isLoading ?
             <LoadingSpinner /> :
             'create my account'
           }
         </SubmitButton>
       </form>
+
+      <hr className='mt-7 mb-5' />
+
+      <Link href='/auth/signin' className='text-center block'>
+        Sign in to my account
+      </Link>
     </div>
   )
 }

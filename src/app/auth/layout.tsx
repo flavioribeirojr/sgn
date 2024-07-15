@@ -19,7 +19,7 @@ export default function AuthLayout({
       />
       <div className='bg-black opacity-25 absolute w-full h-full' />
       <div className='backdrop-blur-sm absolute w-full h-full' />
-      <main className='relative flex flex-col items-center pt-12 px-7 2xl:justify-center flex-grow'>
+      <main className='relative flex flex-col items-center pt-12 px-7 justify-center flex-grow'>
         <div className='w-24 h-24 rounded-full flex justify-center items-center text-6xl bg-tek-yellow'>
           🦧
         </div>

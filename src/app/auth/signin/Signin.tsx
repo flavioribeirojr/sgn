@@ -1,6 +1,7 @@
 'use client'
 
 import { FormErrorMessage } from '@/components/form-error-message/form-error-message'
+import { FormField } from '@/components/form-field/FormField'
 import { FormTextInput } from '@/components/form-text-input/form-text-input'
 import { LoadingSpinner } from '@/components/loading-spinner/loading-spinner'
 import { SubmitButton } from '@/components/submit-button/submit-button'
@@ -8,6 +9,7 @@ import { useSignIn } from '@clerk/nextjs'
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors'
 import { ClerkAPIError } from '@clerk/types'
 import { IBM_Plex_Serif } from 'next/font/google'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -28,7 +30,6 @@ export function Signin() {
   })
 
   async function submit(values: SigninForm) {
-    console.log('vai', isLoaded)
     if (!isLoaded) {
       return
     }
@@ -59,11 +60,14 @@ export function Signin() {
   return (
     <div className='w-full md:w-2/6 2xl:w-1/5 py-8 px-8 rounded-md bg-white'>
       <h2 className={`${ibmPlexSerif.className} text-center text-2.5xl mb-3 leading-8`}>sign-in to your account</h2>
-      <form onSubmit={e => {
-        e.preventDefault()
-        handleSubmit(submit)(e)
-      }}>
-        <div className='mb-4'>
+      <form
+        className='mt-8'
+        onSubmit={e => {
+          e.preventDefault()
+          handleSubmit(submit)(e)
+        }}
+      >
+        <FormField label='Email' className='mb-4'>
           <FormTextInput
             placeholder='your email address'
             type='email'
@@ -80,8 +84,8 @@ export function Signin() {
               { errors.email.message }
             </FormErrorMessage>
           )}
-        </div>
-        <div className='mb-4'>
+        </FormField>
+        <FormField label='Password' className='mb-4'>
           <FormTextInput
             type='password'
             placeholder='******'
@@ -94,7 +98,7 @@ export function Signin() {
               { errors.password.message }
             </FormErrorMessage>
           )}
-        </div>
+        </FormField>
         { clerkErrors.length > 0 && (
           <div className='mt-7'>
             { clerkErrors.map(err => (
@@ -104,13 +108,22 @@ export function Signin() {
             )) }
           </div>
         )}
-        <SubmitButton className='mt-7 mb-3' type='submit'>
+        <SubmitButton className='mt-7' type='submit'>
           { isLoading ?
             <LoadingSpinner /> :
-            'create my account'
+            'signin'
           }
         </SubmitButton>
       </form>
+
+      <hr className='mt-7 mb-5' />
+
+      <Link
+        className='text-center block'
+        href='/auth/signup'
+      >
+        Create my account
+      </Link>
     </div>
   )
 }

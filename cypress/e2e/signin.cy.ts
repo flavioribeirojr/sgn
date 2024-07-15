@@ -46,4 +46,11 @@ describe('/auth/signin', () => {
       cy.contains('Incorrect password. Please try again.')
     })
   })
+
+  it('must have link to signup', () => {
+    cy.visit('/auth/signin')
+
+    cy.get('a').first().click()
+    cy.get('h2').should('contain', 'create your profile')
+  })
 })

@@ -122,4 +122,33 @@ describe('UserSignup', () => {
       cy.task('delete_clerk_user_by_email', email)
     })
   })
+
+  it('must be able to go back from verification to signup', () => {
+    cy.session('cancel_signup', () => {
+      setupClerkTestingToken()
+
+      cy.visit('/auth/signup')
+      const email = `${faker.string.uuid()}+clerk_test@example.com`
+
+      cy.get('input[name="name"]').type(faker.person.fullName())
+      cy.get('input[name="dateOfBirth"]').type('1990-01-01')
+      cy.get('input[name="email"]').type(email)
+      cy.get('input[name="password"]').type(faker.internet.password())
+
+      cy.get('form > button').click()
+
+      cy.get('h2').should('contain', 'verify your email')
+
+      cy.get('button.text-red-500').click()
+
+      cy.get('h2').should('contain', 'create your profile')
+    })
+  })
+
+  it('must have link to signin', () => {
+    cy.visit('/auth/signup')
+
+    cy.get('a').first().click()
+    cy.get('h2').should('contain', 'sign-in to your account')
+  })
 })

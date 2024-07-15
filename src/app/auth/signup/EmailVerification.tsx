@@ -13,6 +13,7 @@ import { ClerkAPIError } from '@clerk/types'
 import { trpc } from '@/client'
 import type { AppRouterInputs } from '@/server'
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors'
+import { FormField } from '@/components/form-field/FormField'
 
 const ibmPlexSerif = IBM_Plex_Serif({ weight: '600', subsets: ['latin'] })
 
@@ -75,18 +76,19 @@ export function EmailVerification(props: {
         please enter the code you received on your inbox below to verify your email
       </p>
       <form onSubmit={handleSubmit(submitCallback)}>
-        <FormTextInput
-          {...register('verificationCode', { required: { message: 'Please provide the verification code', value: true } })}
-          type='text'
-          placeholder='6 digit code'
-          inputMode='numeric'
-          className='mt-6'
-        />
-        { errors.verificationCode &&
-          <FormErrorMessage>
-            { errors.verificationCode.message }
-          </FormErrorMessage>
-        }
+        <FormField label='Verification code' className='mt-2'>
+          <FormTextInput
+            {...register('verificationCode', { required: { message: 'Please provide the verification code', value: true } })}
+            type='text'
+            placeholder='0000'
+            inputMode='numeric'
+          />
+          { errors.verificationCode &&
+            <FormErrorMessage>
+              { errors.verificationCode.message }
+            </FormErrorMessage>
+          }
+        </FormField>
         { clerkErrors.length > 0 && (
           <div className='mt-4'>
             { clerkErrors.map(err => (
@@ -104,6 +106,10 @@ export function EmailVerification(props: {
           }
         </SubmitButton>
       </form>
+
+      <button onClick={props.onVerificationExpired} className='block ml-auto mr-auto mt-6 text-red-500'>
+        Cancel Verification
+      </button>
     </div>
   )
 }
