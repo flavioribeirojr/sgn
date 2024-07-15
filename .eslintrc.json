@@ -8,6 +8,15 @@
     "semi": [
       "error",
       "never"
-    ]
+    ],
+    "jsx-quotes": [
+      "error",
+      "prefer-single"
+    ],
+    "no-trailing-spaces": [
+      "error"
+    ],
+    "indent": ["error", 2],
+    "no-unused-vars": ["error"]
   }
 }
